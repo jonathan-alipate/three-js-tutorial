@@ -1,8 +1,6 @@
-const { TetrahedronGeometry } = require("three");
-
 let scene, camera, renderer, mesh, meshFloor;
 let keyboard = {}
-let player = { height: 1.8 }
+let player = { height: 1.8, speed: 0.05 }
 
 
 function init() {
@@ -22,17 +20,18 @@ function init() {
     scene.add(mesh);
 
     meshFloor = new THREE.Mesh(
-        new THREE.PlaneGeometry(10,10),
+        new THREE.PlaneGeometry(10, 10, 10, 10),
         new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
     )
     // Add the mesh to the scene.
+    meshFloor.rotation.x -= Math.PI / 2
     scene.add(meshFloor);
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
-    camera.position.set(0, 0, -5);
+    camera.position.set(0, player.height, -5);
 
     // Point the camera to look at 0,0,0
-    camera.lookAt(new THREE.Vector3(0, player.height, 0));
+    camera.lookAt(new THREE.Vector3(0, 0, 0));
     // Alternatively, this also works:
     // camera.lookAt(mesh.position);
 
@@ -53,12 +52,34 @@ function animate() {
     mesh.rotation.x += 0.01;
     mesh.rotation.y += 0.02;
 
+    if(keyboard[87]){// W key
+        camera.position.x += Math.sin(camera.rotation.y) * player.speed
+        camera.position.z += Math.cos(camera.rotation.y) * player.speed
+    }
+
+    if(keyboard[83]){// S key
+        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+    }
+    if(keyboard[65]){// A key
+        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+    }
+    if(keyboard[68]){// D key
+        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+    }
+
+    if(keyboard[87]){
+        
+    }
+
     if (keyboard[37]) {
-        camera.rotation.y -= Math.PI * 0.01
+        camera.rotation.x -= Math.PI * 0.01
     }
 
     if (keyboard[39]) {
-        camera.rotation.y += Math.PI * 0.01
+        camera.rotation.x += Math.PI * 0.01
     }
     // Draw the scene from the perspective of the camera.
     renderer.render(scene, camera);
