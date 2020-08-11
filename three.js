@@ -1,4 +1,5 @@
 let scene, camera, renderer, mesh;
+let keyboard = {}
 
 
 function init(){
@@ -41,11 +42,29 @@ function animate(){
 	
 	// Rotate our mesh.
 	mesh.rotation.x += 0.01;
-	mesh.rotation.y += 0.02;
-	
+    mesh.rotation.y += 0.02;
+    
+	if(keyboard[37]){
+        camera.rotation.y -= Math.PI * 0.01
+    }
+
+    if(keyboard[39]){
+        camera.rotation.y += Math.PI * 0.01
+    }
 	// Draw the scene from the perspective of the camera.
 	renderer.render(scene, camera);
 }
 
+function keydown(event){
+    keyboard[event.keyCode] = true
+}
+
+function keyup(event){
+    keyboard[event.keyCode] = false
+}
+
+window.addEventListener('keydown', keydown)
+window.addEventListener('keyup', keyup)
+
 // When the page has loaded, run init();
-window.onload = init;
+window.onload = init
