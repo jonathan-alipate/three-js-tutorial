@@ -18,6 +18,8 @@ function init() {
     );
     // Add the mesh to the scene.
     mesh.position.y += 1
+    mesh.receiveShadow = true
+    mesh.castShadow = true
     scene.add(mesh);
 
     meshFloor = new THREE.Mesh(
@@ -26,21 +28,36 @@ function init() {
     )
     // Add the mesh to the scene.
     meshFloor.rotation.x -= Math.PI / 2
+    meshFloor.receiveShadow = true
     scene.add(meshFloor)
+
+    //adding ambient light
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
+    scene.add(ambientLight)
+
+    //adding spot light
+    spotLight = new THREE.PointLight(0xffffff, 0.8, 30)
+    spotLight.position.set(-3, 6, -3)
+    spotLight.castShadow = true
+    spotLight.shadow.camera.near = 0.1
+    spotLight.shadow.camera.far = 25
+    scene.add(spotLight)
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5);
 
     // Point the camera to look at 0,0,0
-    camera.lookAt(new THREE.Vector3(0, player.height, 0));
+    camera.lookAt(new THREE.Vector3(0, player.height, 0))
     // Alternatively, this also works:
     // camera.lookAt(mesh.position);
 
     // Creates the renderer with size 1280x720
-    renderer = new THREE.WebGLRenderer();
+    renderer = new THREE.WebGLRenderer()
     renderer.setSize(1280, 720);
+    //enabling shadows
+    renderer.shadowMap.enabled = true
     // Puts the "canvas" into our HTML page.
-    document.body.appendChild(renderer.domElement);
+    document.body.appendChild(renderer.domElement)
 
     // Begin animation
     animate();
