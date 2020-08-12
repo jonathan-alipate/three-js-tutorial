@@ -1,4 +1,5 @@
-const THREE = require('three')
+const THREE = require('three');
+const { MaterialLoader, ObjectLoader } = require('three');
 
 let scene, camera, renderer, mesh, meshFloor;
 let keyboard = {}
@@ -49,13 +50,15 @@ function init() {
     let textureLoader = new THREE.TextureLoader()
     crateTexture = new textureLoader.load('crate0_diffuse.png')
     crateBumpMap = textureLoader.load('crate0_bump.png')
+    crateNormal = textureLoader.load('crate0_normal.png')
 
     crate = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),
         new THREE.MeshPhongMaterial({
             color: 0xffffff,
             map: crateTexture,
-            bumpMap: crateBumpMap
+            bumpMap: crateBumpMap,
+            normalMap: crateNormal
         })
     )
 
@@ -63,6 +66,11 @@ function init() {
     crate.receiveShadow = true
     crate.castShadow = true
     scene.add(crate)
+
+    let objLoader = new THREE.ObjectLoader()
+    objLoader.load('tent_detailedOpen.obj', fucntion(object){
+        scene.add(object)
+    })
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5);
