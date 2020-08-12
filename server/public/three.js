@@ -1,3 +1,5 @@
+const THREE = require('three')
+
 let scene, camera, renderer, mesh, meshFloor;
 let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005}
@@ -6,7 +8,6 @@ let crate, crateTexture, crateNormalMap, crateBumpMap
 
 function init() {
     // Create a scene and camera
-    console.log('heyo!')
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 1000);
 
@@ -46,7 +47,7 @@ function init() {
     scene.add(spotLight)
 
     let textureLoader = new THREE.TextureLoader()
-    crateTexture = new textureLoader.load('crate0/crate0_diffuse.png')
+    crateTexture = new textureLoader.load('crate0_diffuse.png')
 
     crate = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),
