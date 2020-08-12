@@ -1,6 +1,7 @@
 let scene, camera, renderer, mesh, meshFloor;
 let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005}
+let crate, crateTexture, crateNormalMap, crateBumpMap
 
 
 function init() {
@@ -23,7 +24,7 @@ function init() {
     scene.add(mesh);
 
     meshFloor = new THREE.Mesh(
-        new THREE.PlaneGeometry(10, 10, 10, 10),
+        new THREE.PlaneGeometry(20, 20, 10, 10),
         new THREE.MeshPhongMaterial({ color: 0xffffff, wireframe: false })
     )
     // Add the mesh to the scene.
@@ -42,6 +43,22 @@ function init() {
     spotLight.shadow.camera.near = 0.1
     spotLight.shadow.camera.far = 25
     scene.add(spotLight)
+
+    let textureLoader = new THREE.TextureLoader()
+    crateTexture = new textureLoader.load('./crate0/crate0_diffuse.png')
+
+    crate = new THREE.Mesh(
+        new THREE.BoxGeometry(3, 3, 3),
+        new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            map: crateTexture
+        })
+    )
+
+    crate.position.set(2.5, 1.5, 2.5)
+    crate.receiveShadow = true
+    crate.castShadow = true
+    scene.add(crate)
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5);
