@@ -1,6 +1,6 @@
 let scene, camera, renderer, mesh, meshFloor;
 let keyboard = {}
-let player = { height: 1.8, speed: 0.05 }
+let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005}
 
 
 function init() {
@@ -12,26 +12,27 @@ function init() {
     // Materials affect how the geometry looks, especially under lights.
     mesh = new THREE.Mesh(
         new THREE.BoxGeometry(1, 1, 1), // width, height, depth
-        new THREE.MeshBasicMaterial({ color: 0xff4444, wireframe: true }) // Color is given in hexadecimal RGB
+        new THREE.MeshPhongMaterial({ color: 0xff4444, wireframe: false }) // Color is given in hexadecimal RGB
         // 0xff0000 is pure red, 0x00ff00 is pure green, and 0x0000ff is pure blue.
         // white would be 0xffffff and black would be 0x000000.
     );
     // Add the mesh to the scene.
+    mesh.position.y += 1
     scene.add(mesh);
 
     meshFloor = new THREE.Mesh(
         new THREE.PlaneGeometry(10, 10, 10, 10),
-        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+        new THREE.MeshPhongMaterial({ color: 0xffffff, wireframe: false })
     )
     // Add the mesh to the scene.
     meshFloor.rotation.x -= Math.PI / 2
-    scene.add(meshFloor);
+    scene.add(meshFloor)
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5);
 
     // Point the camera to look at 0,0,0
-    camera.lookAt(new THREE.Vector3(0, 0, 0));
+    camera.lookAt(new THREE.Vector3(0, player.height, 0));
     // Alternatively, this also works:
     // camera.lookAt(mesh.position);
 
@@ -53,33 +54,30 @@ function animate() {
     mesh.rotation.y += 0.02;
 
     if(keyboard[87]){// W key
-        camera.position.x += Math.sin(camera.rotation.y) * player.speed
+        //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
+        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
         camera.position.z += Math.cos(camera.rotation.y) * player.speed
     }
 
     if(keyboard[83]){// S key
-        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
+        camera.position.x += Math.sin(camera.rotation.y) * player.speed
         camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
     }
     if(keyboard[65]){// A key
-        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
-        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+        camera.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y + Math.PI/2) * player.speed 
     }
     if(keyboard[68]){// D key
-        camera.position.x -= Math.sin(camera.rotation.y) * player.speed
-        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+        camera.position.x += Math.sin(camera.rotation.y  - Math.PI/2) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y  - Math.PI/2) * player.speed 
     }
 
-    if(keyboard[87]){
-        
+    if (keyboard[37]) {//left arrow
+        camera.rotation.y -= Math.PI * player.turnSpeed
     }
 
-    if (keyboard[37]) {
-        camera.rotation.x -= Math.PI * 0.01
-    }
-
-    if (keyboard[39]) {
-        camera.rotation.x += Math.PI * 0.01
+    if (keyboard[39]) {// right arrow
+        camera.rotation.y += Math.PI * player.turnSpeed
     }
     // Draw the scene from the perspective of the camera.
     renderer.render(scene, camera);
