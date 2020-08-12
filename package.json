@@ -4,7 +4,7 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
-    "dev": "node server/index.js"
+    "dev": "nodemon server/index.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +19,8 @@
   "dependencies": {
     "express": "^4.17.1",
     "three": "^0.119.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

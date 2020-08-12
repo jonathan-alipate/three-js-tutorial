@@ -6,6 +6,7 @@ let crate, crateTexture, crateNormalMap, crateBumpMap
 
 function init() {
     // Create a scene and camera
+    console.log('heyo!')
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 1000);
 
@@ -21,7 +22,7 @@ function init() {
     mesh.position.y += 1
     mesh.receiveShadow = true
     mesh.castShadow = true
-    scene.add(mesh);
+    scene.add(mesh)
 
     meshFloor = new THREE.Mesh(
         new THREE.PlaneGeometry(20, 20, 10, 10),
@@ -77,7 +78,7 @@ function init() {
     document.body.appendChild(renderer.domElement)
 
     // Begin animation
-    animate();
+    animate()
 }
 
 function animate() {
