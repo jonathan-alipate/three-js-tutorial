@@ -48,12 +48,14 @@ function init() {
 
     let textureLoader = new THREE.TextureLoader()
     crateTexture = new textureLoader.load('crate0_diffuse.png')
+    crateBumpMap = textureLoader.load('crate0_bump.png')
 
     crate = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),
         new THREE.MeshPhongMaterial({
             color: 0xffffff,
-            map: crateTexture
+            map: crateTexture,
+            bumpMap: crateBumpMap
         })
     )
 
