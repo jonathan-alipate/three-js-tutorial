@@ -45,7 +45,7 @@ function init() {
     scene.add(spotLight)
 
     let textureLoader = new THREE.TextureLoader()
-    crateTexture = new textureLoader.load('./crate0/crate0_diffuse.png')
+    crateTexture = new textureLoader.load('crate0/crate0_diffuse.png')
 
     crate = new THREE.Mesh(
         new THREE.BoxGeometry(3, 3, 3),

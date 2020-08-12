@@ -2,9 +2,9 @@
   "name": "three-js-tutorial",
   "version": "1.0.0",
   "description": "",
-  "main": "index.html",
+  "main": "server/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node server/index.js"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/jonathan-alipate/three-js-tutorial#readme",
   "dependencies": {
+    "express": "^4.17.1",
     "three": "^0.119.1"
   }
 }
