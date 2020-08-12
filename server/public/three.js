@@ -1,16 +1,17 @@
-const THREE = require('three');
-const { MaterialLoader, ObjectLoader } = require('three');
+import * as THREE from 'three'
+import { OBJLoader } from '../loaders/OBJLoader'
+import { MTLLoader } from '../loaders/MTLLoader'
 
-let scene, camera, renderer, mesh, meshFloor;
+let scene, camera, renderer, mesh, meshFloor, ambientLight, spotLight, tent
 let keyboard = {}
-let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005}
-let crate, crateTexture, crateNormalMap, crateBumpMap
+let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005 }
+let crate, crateTexture, crateNormal, crateBumpMap
 
 
 function init() {
     // Create a scene and camera
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 1000);
+    scene = new THREE.Scene()
+    camera = new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 1000)
 
     // A Mesh is made up of a geometry and a material.
     // Materials affect how the geometry looks, especially under lights.
@@ -67,13 +68,29 @@ function init() {
     crate.castShadow = true
     scene.add(crate)
 
-    let objLoader = new THREE.ObjectLoader()
-    objLoader.load('tent_detailedOpen.obj', fucntion(object){
-        scene.add(object)
+
+    const mtlLoader = new MTLLoader()
+    mtlLoader.load('tent_detailedOpen.mtl', (materials) => {
+        materials.preload()
+        const objLoader = new OBJLoader()
+        objLoader.setMaterials(materials)
+        objLoader.load('tent_detailedOpen.obj', (object) => {
+            object.position.set(-2.5, 1.5, -2.5)
+            scene.add(object)
+        },
+            // called when loading is in progresses
+            function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded')
+            },
+            // called when loading has errors
+            function (error) {
+                console.log('An error happened')
+            }
+        );
     })
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
-    camera.position.set(0, player.height, -5);
+    camera.position.set(0, player.height, -5)
 
     // Point the camera to look at 0,0,0
     camera.lookAt(new THREE.Vector3(0, player.height, 0))
@@ -82,7 +99,7 @@ function init() {
 
     // Creates the renderer with size 1280x720
     renderer = new THREE.WebGLRenderer()
-    renderer.setSize(1280, 720);
+    renderer.setSize(1280, 720)
     //enabling shadows
     renderer.shadowMap.enabled = true
     // Puts the "canvas" into our HTML page.
@@ -96,26 +113,26 @@ function animate() {
     requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
 
     // Rotate our mesh.
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.02;
+    mesh.rotation.x += 0.01
+    mesh.rotation.y += 0.02
 
-    if(keyboard[87]){// W key
+    if (keyboard[87]) {// W key
         //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
         camera.position.x -= Math.sin(camera.rotation.y) * player.speed
         camera.position.z += Math.cos(camera.rotation.y) * player.speed
     }
 
-    if(keyboard[83]){// S key
+    if (keyboard[83]) {// S key
         camera.position.x += Math.sin(camera.rotation.y) * player.speed
-        camera.position.z -= Math.cos(camera.rotation.y) * player.speed 
+        camera.position.z -= Math.cos(camera.rotation.y) * player.speed
     }
-    if(keyboard[65]){// A key
-        camera.position.x += Math.sin(camera.rotation.y + Math.PI/2) * player.speed
-        camera.position.z -= Math.cos(camera.rotation.y + Math.PI/2) * player.speed 
+    if (keyboard[65]) {// A key
+        camera.position.x += Math.sin(camera.rotation.y + Math.PI / 2) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y + Math.PI / 2) * player.speed
     }
-    if(keyboard[68]){// D key
-        camera.position.x += Math.sin(camera.rotation.y  - Math.PI/2) * player.speed
-        camera.position.z -= Math.cos(camera.rotation.y  - Math.PI/2) * player.speed 
+    if (keyboard[68]) {// D key
+        camera.position.x += Math.sin(camera.rotation.y - Math.PI / 2) * player.speed
+        camera.position.z -= Math.cos(camera.rotation.y - Math.PI / 2) * player.speed
     }
 
     if (keyboard[37]) {//left arrow
