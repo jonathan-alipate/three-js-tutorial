@@ -3,7 +3,7 @@ import { OBJLoader } from '../loaders/OBJLoader'
 import { MTLLoader } from '../loaders/MTLLoader'
 import { LoadingManager } from 'three'
 
-let scene, camera, renderer, mesh, meshFloor, ambientLight, spotLight, loadingManager
+let scene, camera, renderer, mesh, meshFloor, ambientLight, spotLight, loadingManager, clock
 let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005 }
 let crate, crateTexture, crateNormal, crateBumpMap
@@ -30,6 +30,7 @@ const models = {
 const meshes = {}
 
 function init() {
+    clock = new THREE.Clock()
 
     //Loading manager
     loadingManager = new THREE.LoadingManager()
@@ -160,15 +161,18 @@ function animate() {
 
     requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
 
+    var time = Date.now() * 0.0005
+    var delta = clock.getDelta()
+
     // Rotate our mesh.
     mesh.rotation.x += 0.01
     mesh.rotation.y += 0.02
     crate.rotation.y += 0.01
 
     meshes['gun'].position.set(
-    camera.position.x - Math.sin(camera.rotation.y) * 0.6,
-    camera.position.y - 0.5,
-    camera.position.z + Math.cos(camera.rotation.y) * 0.6
+    camera.position.x - Math.sin(camera.rotation.y + Math.PI/6) * 0.6,
+    camera.position.y - 0.5 + Math.sin(time*8)*0.01,
+    camera.position.z + Math.cos(camera.rotation.y + Math.PI/6) * 0.6
     )
 
     meshes['gun'].rotation.set(
