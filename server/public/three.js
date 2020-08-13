@@ -171,7 +171,7 @@ function animate() {
 
     meshes['gun'].position.set(
     camera.position.x - Math.sin(camera.rotation.y + Math.PI/6) * 0.6,
-    camera.position.y - 0.5 + Math.sin(time*8)*0.01,
+    camera.position.y - 0.5 + Math.sin(time*8 + camera.position.x + camera.position.y)*0.01,
     camera.position.z + Math.cos(camera.rotation.y + Math.PI/6) * 0.6
     )
 
