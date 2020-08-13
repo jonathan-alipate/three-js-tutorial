@@ -1,11 +1,13 @@
 import * as THREE from 'three'
 import { OBJLoader } from '../loaders/OBJLoader'
 import { MTLLoader } from '../loaders/MTLLoader'
+import { LoadingManager } from 'three'
 
-let scene, camera, renderer, mesh, meshFloor, ambientLight, spotLight, tent
+let scene, camera, renderer, mesh, meshFloor, ambientLight, spotLight, loadingManager
 let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005 }
 let crate, crateTexture, crateNormal, crateBumpMap
+let RESOURCES_LOADED = false
 
 const models = {
     cannon: {
@@ -23,6 +25,18 @@ const models = {
 const meshes = {}
 
 function init() {
+
+    //Loading manager
+    loadingManager = new THREE.LoadingManager()
+    loadingManager.onProgress = function(item, loaded, total){
+        console.log(item, loaded, total)
+    }
+    loadingManager.onLoad = () => {
+        console.log('loading complete!')
+        RESOURCES_LOADED = true
+        onResourcesLoaded()
+    }
+
     // Create a scene and camera
     scene = new THREE.Scene()
     camera = new THREE.PerspectiveCamera(90, 1280 / 720, 0.1, 1000)
@@ -62,7 +76,7 @@ function init() {
     spotLight.shadow.camera.far = 40
     scene.add(spotLight)
 
-    let textureLoader = new THREE.TextureLoader()
+    let textureLoader = new THREE.TextureLoader(loadingManager)
     crateTexture = new textureLoader.load('crate0_diffuse.png')
     crateBumpMap = textureLoader.load('crate0_bump.png')
     crateNormal = textureLoader.load('crate0_normal.png')
@@ -82,10 +96,12 @@ function init() {
     crate.castShadow = true
     scene.add(crate)
 
+    //load each model into models object
+
     Object.keys(models).forEach(key => {
-        const mtlLoader = new MTLLoader()
+        const mtlLoader = new MTLLoader(loadingManager)
         mtlLoader.load(models[key].mtl, materials => {
-            const objLoader = new OBJLoader()
+            const objLoader = new OBJLoader(loadingManager)
             objLoader.setMaterials(materials)
             objLoader.load(models[key].obj, (object) => {
                 object.traverse((polygon) => {
@@ -96,22 +112,6 @@ function init() {
             })
         })
     })
-    // for (const key in models) {
-    //     console.log(key)
-    //     const mtlLoader = new MTLLoader()
-    //     mtlLoader.load(models[key].mlt, (materials) => {
-    //         console.log(materials)
-    //     // //     const objLoader = new OBJLoader()
-    //     // //     objLoader.setMaterials(materials)
-    //     // //     objLoader.load(models[key].obj, (object) => {
-    //     // //         object.traverse((polygon) => {
-    //     // //             polygon.castShadow = true
-    //     // //             polygon.receiveShadow = true
-    //     // //         })
-    //     // //         models[key].mesh = object
-    //     // //     })
-    //     })
-    // }
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5)
@@ -135,13 +135,14 @@ function init() {
 
 //runs when all resources are loaded
 function onResourcesLoaded() {
-    meshes['cannon1'] = models.cannon.clone()
-    meshes['cannon2'] = models.cannon.clone()
-    meshes['tree1'] = models.tree.clone()
-    meshes['tree2'] = models.tree.clone()
+    console.log(models)
+    meshes['cannon1'] = models.cannon.mesh.clone()
+    meshes['cannon2'] = models.cannon.mesh.clone()
+    meshes['tree1'] = models.tree.mesh.clone()
+    meshes['tree2'] = models.tree.mesh.clone()
 
-    meshes['cannon1'].position(-3, 0, -3)
-    scene.add(meshes['cannon1'])
+    meshes['tree1'].position.set(-2, 0, -2)
+    scene.add(meshes.tree1)
 }
 
 function animate() {
