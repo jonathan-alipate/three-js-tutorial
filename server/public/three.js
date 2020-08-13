@@ -29,6 +29,8 @@ const models = {
 
 const meshes = {}
 
+let bullets = []
+
 function init() {
     clock = new THREE.Clock()
 
@@ -170,9 +172,9 @@ function animate() {
     crate.rotation.y += 0.01
 
     meshes['gun'].position.set(
-    camera.position.x - Math.sin(camera.rotation.y + Math.PI/6) * 0.6,
-    camera.position.y - 0.5 + Math.sin(time*8 + camera.position.x + camera.position.y)*0.01,
-    camera.position.z + Math.cos(camera.rotation.y + Math.PI/6) * 0.6
+        camera.position.x - Math.sin(camera.rotation.y + Math.PI / 6) * 0.6,
+        camera.position.y - 0.5 + Math.sin(time * 8 + camera.position.x + camera.position.y) * 0.01,
+        camera.position.z + Math.cos(camera.rotation.y + Math.PI / 6) * 0.6
     )
 
     meshes['gun'].rotation.set(
@@ -183,7 +185,40 @@ function animate() {
 
     if (keyboard[32]) {// space bar
         //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
-        camera.position.y += 0.1
+        const bullet = new THREE.Mesh(
+            new THREE.SphereGeometry(0.05, 8, 8),
+            new THREE.MeshBasicMaterial({ color: 0xffffff })
+        )
+
+        bullet.position.set(
+            meshes['gun'].position.x,
+            meshes['gun'].position.y,
+            meshes['gun'].position.z
+        )
+
+        bullet.alive = true
+        setTimeout(function () {
+            bullet.alive = false
+            scene.remove(bullet)
+        }, 1000)
+
+        bullet.velocity = new THREE.Vector3(
+            -Math.sin(camera.rotation.y),
+            0,
+            Math.cos(camera.rotation.y)
+        )
+
+        bullets.push(bullet)
+        scene.add(bullet)
+    }
+
+    for (let index = 0; index < bullets.length; index += 1) {
+        if (bullets[index] === undefined) continue;
+        if (bullets[index].alive === false) {
+            bullets.splice(index, 1)
+            continue;
+        }
+        bullets[index].position.add(bullets[index].velocity)
     }
 
     if (keyboard[87]) {// W key
