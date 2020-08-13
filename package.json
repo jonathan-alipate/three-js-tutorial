@@ -6,7 +6,7 @@
   "scripts": {
     "dev:build": "webpack --config webpack.config.js",
     "dev:start": "nodemon server",
-    "dev": "dev:build && dev:start"
+    "dev": "webpack --config webpack.config.js && npm run dev:start"
   },
   "repository": {
     "type": "git",

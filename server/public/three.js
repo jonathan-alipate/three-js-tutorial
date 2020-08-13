@@ -7,7 +7,6 @@ let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005 }
 let crate, crateTexture, crateNormal, crateBumpMap
 
-
 function init() {
     // Create a scene and camera
     scene = new THREE.Scene()
@@ -37,15 +36,15 @@ function init() {
     scene.add(meshFloor)
 
     //adding ambient light
-    ambientLight = new THREE.AmbientLight(0xffffff, 0.2)
+    ambientLight = new THREE.AmbientLight(0xffffff, 0.4)
     scene.add(ambientLight)
 
     //adding spot light
     spotLight = new THREE.PointLight(0xffffff, 0.8, 30)
-    spotLight.position.set(-3, 6, -3)
+    spotLight.position.set(-10, 10, -10)
     spotLight.castShadow = true
     spotLight.shadow.camera.near = 0.1
-    spotLight.shadow.camera.far = 25
+    spotLight.shadow.camera.far = 40
     scene.add(spotLight)
 
     let textureLoader = new THREE.TextureLoader()
@@ -70,13 +69,17 @@ function init() {
 
 
     const mtlLoader = new MTLLoader()
-    mtlLoader.load('tent_detailedOpen.mtl', (materials) => {
+    mtlLoader.load('cannonLarge.mtl', (materials) => {
         materials.preload()
         const objLoader = new OBJLoader()
         objLoader.setMaterials(materials)
-        objLoader.load('tent_detailedOpen.obj', (object) => {
-            object.position.set(-2.5, 1.5, -2.5)
+        objLoader.load('cannonLarge.obj', (object) => {
+            object.traverse((polygon) => {
+                polygon.castShadow = true
+                polygon.receiveShadow = true
+            })
             scene.add(object)
+            object.position.set(-4, 0, -4)
         },
             // called when loading is in progresses
             function (xhr) {
@@ -115,6 +118,11 @@ function animate() {
     // Rotate our mesh.
     mesh.rotation.x += 0.01
     mesh.rotation.y += 0.02
+
+    if (keyboard[32]) {// space bar
+        //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
+        camera.position.y += 0.1
+    }
 
     if (keyboard[87]) {// W key
         //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
