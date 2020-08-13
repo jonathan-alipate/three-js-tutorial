@@ -7,6 +7,21 @@ let keyboard = {}
 let player = { height: 1.8, speed: 0.05, turnSpeed: Math.PI * 0.005 }
 let crate, crateTexture, crateNormal, crateBumpMap
 
+const models = {
+    cannon: {
+        obj: 'cannonLarge.obj',
+        mtl: 'cannonLarge.mtl',
+        mesh: null
+    },
+    tree: {
+        obj: 'tree_pineTallA.obj',
+        mtl: 'tree_pineTallA.mtl',
+        mesh: null
+    }
+}
+
+const meshes = {}
+
 function init() {
     // Create a scene and camera
     scene = new THREE.Scene()
@@ -67,30 +82,36 @@ function init() {
     crate.castShadow = true
     scene.add(crate)
 
-
-    const mtlLoader = new MTLLoader()
-    mtlLoader.load('cannonLarge.mtl', (materials) => {
-        materials.preload()
-        const objLoader = new OBJLoader()
-        objLoader.setMaterials(materials)
-        objLoader.load('cannonLarge.obj', (object) => {
-            object.traverse((polygon) => {
-                polygon.castShadow = true
-                polygon.receiveShadow = true
+    Object.keys(models).forEach(key => {
+        const mtlLoader = new MTLLoader()
+        mtlLoader.load(models[key].mtl, materials => {
+            const objLoader = new OBJLoader()
+            objLoader.setMaterials(materials)
+            objLoader.load(models[key].obj, (object) => {
+                object.traverse((polygon) => {
+                    polygon.castShadow = true
+                    polygon.receiveShadow = true
+                })
+                models[key].mesh = object
             })
-            scene.add(object)
-            object.position.set(-4, 0, -4)
-        },
-            // called when loading is in progresses
-            function (xhr) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded')
-            },
-            // called when loading has errors
-            function (error) {
-                console.log('An error happened')
-            }
-        );
+        })
     })
+    // for (const key in models) {
+    //     console.log(key)
+    //     const mtlLoader = new MTLLoader()
+    //     mtlLoader.load(models[key].mlt, (materials) => {
+    //         console.log(materials)
+    //     // //     const objLoader = new OBJLoader()
+    //     // //     objLoader.setMaterials(materials)
+    //     // //     objLoader.load(models[key].obj, (object) => {
+    //     // //         object.traverse((polygon) => {
+    //     // //             polygon.castShadow = true
+    //     // //             polygon.receiveShadow = true
+    //     // //         })
+    //     // //         models[key].mesh = object
+    //     // //     })
+    //     })
+    // }
 
     // Move the camera to 0,0,-5 (the Y axis is "up")
     camera.position.set(0, player.height, -5)
@@ -112,12 +133,25 @@ function init() {
     animate()
 }
 
+//runs when all resources are loaded
+function onResourcesLoaded() {
+    meshes['cannon1'] = models.cannon.clone()
+    meshes['cannon2'] = models.cannon.clone()
+    meshes['tree1'] = models.tree.clone()
+    meshes['tree2'] = models.tree.clone()
+
+    meshes['cannon1'].position(-3, 0, -3)
+    scene.add(meshes['cannon1'])
+}
+
 function animate() {
+
     requestAnimationFrame(animate); // Tells the browser to smoothly render at 60Hz
 
     // Rotate our mesh.
     mesh.rotation.x += 0.01
     mesh.rotation.y += 0.02
+    crate.rotation.y += 0.01
 
     if (keyboard[32]) {// space bar
         //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
