@@ -19,6 +19,11 @@ const models = {
         obj: 'tree_pineTallA.obj',
         mtl: 'tree_pineTallA.mtl',
         mesh: null
+    },
+    gun: {
+        obj: 'uziLong.obj',
+        mtl: 'uziLong.mtl',
+        mesh: null
     }
 }
 
@@ -28,7 +33,7 @@ function init() {
 
     //Loading manager
     loadingManager = new THREE.LoadingManager()
-    loadingManager.onProgress = function(item, loaded, total){
+    loadingManager.onProgress = function (item, loaded, total) {
         console.log(item, loaded, total)
     }
     loadingManager.onLoad = () => {
@@ -135,14 +140,20 @@ function init() {
 
 //runs when all resources are loaded
 function onResourcesLoaded() {
-    console.log(models)
     meshes['cannon1'] = models.cannon.mesh.clone()
     meshes['cannon2'] = models.cannon.mesh.clone()
     meshes['tree1'] = models.tree.mesh.clone()
     meshes['tree2'] = models.tree.mesh.clone()
+    meshes['gun'] = models.gun.mesh.clone()
+
 
     meshes['tree1'].position.set(-2, 0, -2)
+    meshes['tree2'].position.set(-2.5, 0, -2.5)
+    meshes['gun'].position.set(0, player.height, -4)
+    meshes['gun'].scale.set(10, 10, 10)
     scene.add(meshes.tree1)
+    scene.add(meshes.tree2)
+    scene.add(meshes.gun)
 }
 
 function animate() {
@@ -153,6 +164,18 @@ function animate() {
     mesh.rotation.x += 0.01
     mesh.rotation.y += 0.02
     crate.rotation.y += 0.01
+
+    meshes['gun'].position.set(
+    camera.position.x - Math.sin(camera.rotation.y) * 0.6,
+    camera.position.y - 0.5,
+    camera.position.z + Math.cos(camera.rotation.y) * 0.6
+    )
+
+    meshes['gun'].rotation.set(
+        camera.rotation.x,
+        camera.rotation.y - Math.PI,
+        camera.rotation.z
+    )
 
     if (keyboard[32]) {// space bar
         //taking the x and z components out of the current direction the camera is pointing, and walking in that direction. (instead of absolute x & z)
