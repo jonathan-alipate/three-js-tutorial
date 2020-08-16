@@ -207,6 +207,7 @@ function animate() {
             0,
             Math.cos(camera.rotation.y)
         )
+        // console.log(bullet.velocity)
 
         bullets.push(bullet)
         scene.add(bullet)
@@ -219,6 +220,7 @@ function animate() {
             continue;
         }
         bullets[index].position.add(bullets[index].velocity)
+        console.log(bullets[index].position)
     }
 
     if (keyboard[87]) {// W key
